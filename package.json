@@ -4,6 +4,8 @@
   "description": "solapi-desktop-app-demo",
   "main": "main.js",
   "scripts": {
+    "server": "node server/server.js",
+    "local": "node_modules/electron/cli.js .",
     "pack": "electron-builder --dir",
     "dist": "electron-packager . solapi-desktop-app-demo --platform win32 --arch x64 --out dist/ --overwrite --asar && electron-builder"
   },
