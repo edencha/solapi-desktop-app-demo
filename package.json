@@ -1,0 +1,46 @@
+{
+  "name": "solapi-desktop-app-demo",
+  "version": "1.0.0",
+  "description": "solapi-desktop-app-demo",
+  "main": "main.js",
+  "scripts": {
+    "pack": "electron-builder --dir",
+    "dist": "electron-packager . solapi-desktop-app-demo --platform win32 --arch x64 --out dist/ --overwrite --asar && electron-builder"
+  },
+  "author": "eden@nurigo.net",
+  "license": "ISC",
+  "devDependencies": {
+    "asar": "^2.0.1",
+    "electron": "^5.0.1",
+    "electron-packager": "^13.1.1",
+    "electron-winstaller": "^3.0.4"
+  },
+  "build": {
+    "appId": "solapi.desktop-app.demo",
+    "mac": {
+      "category": "public.desktop-app.demo",
+      "files": [
+        "!server/*",
+        "!dist/*",
+        "!installer.js"
+      ]
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": true
+    }
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.19.0",
+    "coolsms-sdk-v4": "^4.0.13",
+    "express": "^4.16.4",
+    "mongodb": "^3.2.4",
+    "mongoose": "^5.5.8",
+    "qs": "^6.7.0",
+    "uniqid": "^5.0.3",
+    "url-parse": "^1.4.7"
+  }
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>SOLAPI DESKTOP APP DEMO</title>
+  </head>
+  <body>
+    <div class="login-form" style="display: none;">
+      <h4>SOLAPI LOGIN</h4>
+      <div>
+        <button type="button" onclick="onClickLogin()">로그인</button>
+      </div>
+    </div>
+    <div class="textmessage-form" style="display: none;">
+      <div>
+        <div>잔액: <span class="balance">0</span></div>
+        <div>포인트: <span class="point">0</span></div>
+      </div>
+      <div>
+        <p>
+          1. 발신번호 선택
+        </p>
+        <select name="from" id="from">
+          <option value="">발신번호 선택</option>
+        </select>
+      </div>
+      <div>
+        <p>2. 수신번호 입력</p>
+        <input type="text" id="to" name="to" />
+      </div>
+      <div>
+        <p>3. 문자 내용 입력</p>
+        <textarea
+          name="message"
+          id="message"
+          cols="40"
+          rows="10"
+          onkeyup="onChangeTextMessage()"
+        ></textarea>
+        <p>
+          <span class="size">0</span>/<span class="max-size">90</span>
+          Byte
+        </p>
+      </div>
+      <div>
+        <p>4. 문자 발송</p>
+        <button type="button" onclick="onClickSendMessage()">전송</button>
+      </div>
+      <div>
+        <p>5. 문자 발송 결과</p>
+        <textarea name="response" id="response" cols="70" rows="10"></textarea>
+      </div>
+      <div>
+        <button onclick="onClickLogout()">로그아웃</button>
+      </div>
+    </div>
+    <script src="./renderer.js"></script>
+  </body>
+</html>
