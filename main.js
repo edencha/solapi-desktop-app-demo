@@ -2,18 +2,17 @@ const electron = require('electron')
 const qs = require('qs')
 const axios = require('axios')
 const parse = require('url-parse')
-const uniqid = require('uniqid')
 const { app } = electron
 const { BrowserWindow, session, ipcMain, dialog } = electron
 let win
 let child
 
 const config = {
-  apiHost: 'http://127.0.0.1:3000',
+  apiHost: 'https://solapi-desktop-app-demo.sendsms.kr',
   solapiHost: 'https://api.solapi.com',
   client_id: 'CIDIVP82EOCJX1WO',
   response_type: 'code',
-  redirect_uri: 'http://127.0.0.1:3000/token',
+  redirect_uri: 'https://solapi-desktop-app-demo.sendsms.kr/token',
   scope: 'users:read message:write senderid:read'
 }
 
@@ -49,9 +48,11 @@ function setCookie(data) {
 
 ipcMain.on('get-senderids', async (e, state) => {
   try {
-    const { data } = await axios.get(
-      config.apiHost + '/senderids?state=' + state
-    )
+    const { data } = await axios.get(config.apiHost + '/senderids', {
+      headers: {
+        Authorization: `Bearer ${state}`
+      }
+    })
     win.webContents.send('senderids', data.senderids)
   } catch (error) {
     console.error(error)
@@ -59,7 +60,11 @@ ipcMain.on('get-senderids', async (e, state) => {
 })
 
 function getBalance(state) {
-  return axios.get(config.apiHost + '/balance?state=' + state)
+  return axios.get(config.apiHost + '/balance', {
+    headers: {
+      Authorization: `Bearer ${state}`
+    }
+  })
 }
 
 ipcMain.on('get-balance', async (e, state) => {
@@ -106,6 +111,7 @@ ipcMain.on('request-logout', async e => {
 })
 
 ipcMain.on('request-login', async e => {
+  let url, state
   // 이미 로그인창이 열려있는 경우 기존의 창은 닫기
   if (child) child.destroy()
   child = new BrowserWindow({
@@ -118,20 +124,16 @@ ipcMain.on('request-login', async e => {
       nodeIntegration: true
     }
   })
-
   child.setMenu(null)
-  // 권한 승인 페이지 url
-  const authorizePage = config.solapiHost + '/oauth2/v1/authorize?'
-  const state = uniqid()
-  const query = {
-    client_id: config.client_id,
-    response_type: config.response_type,
-    redirect_uri: config.redirect_uri,
-    scope: config.scope,
-    state
+  try {
+    // 로그인 버튼 url 받아오기
+    const { data } = await axios.get(config.apiHost + '/get-authorize-url')
+    url = data.url
+    state = data.state
+  } catch (error) {
+    console.error(error)
   }
-  const loadUrl = authorizePage + qs.stringify(query)
-  child.loadURL(loadUrl)
+  child.loadURL(url)
   child.webContents.on('did-redirect-navigation', async (e, url) => {
     try {
       const { pathname, query } = parse(url)

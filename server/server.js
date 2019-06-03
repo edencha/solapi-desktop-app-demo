@@ -1,11 +1,18 @@
 const express = require('express')
 const app = express()
 const axios = require('axios')
+const uniqid = require('uniqid')
+const qs = require('qs')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const { config, Group } = require('coolsms-sdk-v4')
 const AccessToken = require('./models/accessToken')
 const clientConfig = require('./client-config.json')
+const oauth2Config = {
+  response_type: 'code',
+  redirect_uri: 'https://solapi-desktop-app-demo.sendsms.kr/token',
+  scope: 'users:read message:write senderid:read'
+}
 
 app.use(bodyParser.json())
 
@@ -13,6 +20,10 @@ mongoose
   .connect('mongodb://localhost/desktop-app', { useNewUrlParser: true })
   .then(() => console.log('Successfully connected to mongodb'))
   .catch(e => console.error(e))
+
+app.use('/healthcheck', (req, res) => {
+  return res.status(200)
+})
 
 // get access token
 app.use('/token', async (req, res, next) => {
@@ -24,7 +35,7 @@ app.use('/token', async (req, res, next) => {
       grant_type: 'authorization_code',
       client_id: clientConfig.clientId,
       client_secret: clientConfig.clientSecret,
-      redirect_uri: 'http://127.0.0.1:3000/token',
+      redirect_uri: 'https://solapi-desktop-app-demo.sendsms.kr/token',
       code
     }
     const { data } = await axios.post(requestUrl, reqBody)
@@ -53,6 +64,23 @@ function getAccessToken(state) {
       .catch(reject)
   })
 }
+
+// 권한 승인 페이지 url
+app.use('/get-authorize-url', (req, res) => {
+  const authorizePage = 'https://api.solapi.com/oauth2/v1/authorize?'
+  const state = uniqid()
+  const query = {
+    client_id: clientConfig.clientId,
+    response_type: oauth2Config.response_type,
+    redirect_uri: oauth2Config.redirect_uri,
+    scope: oauth2Config.scope,
+    state
+  }
+  res.send({
+    url: authorizePage + qs.stringify(query),
+    state
+  })
+})
 
 app.use('/send', async (req, res, next) => {
   try {
@@ -91,7 +119,7 @@ app.use('/senderids', async (req, res, next) => {
 
 app.use('/balance', async (req, res, next) => {
   try {
-    const { state } = req.query
+    const state = req.headers.authorization.split(' ')[1]
     const accessToken = await getAccessToken(state)
     const headers = { Authorization: `Bearer ${accessToken}` }
     const requestUrl = 'https://api.solapi.com/cash/v1/balance'
