@@ -22,7 +22,7 @@ mongoose
   .catch(e => console.error(e))
 
 app.use('/healthcheck', (req, res) => {
-  return res.status(200)
+  return res.status(200).send()
 })
 
 // get access token
