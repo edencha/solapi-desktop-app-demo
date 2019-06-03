@@ -1,0 +1,8 @@
+targets:
+  ubuntu-14.04: 
+    runner: upstart-1.5 
+    dependencies: 
+      - npm
+      - chrony
+default_dependencies: false
+after_install: "postinstall.sh"
