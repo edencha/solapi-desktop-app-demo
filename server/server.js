@@ -17,7 +17,7 @@ const oauth2Config = {
 app.use(bodyParser.json())
 
 mongoose
-  .connect('mongodb://localhost/desktop-app', { useNewUrlParser: true })
+  .connect('mongodb://mongo1.middlewares.test.coolsms.co.kr/desktop-app', { useNewUrlParser: true })
   .then(() => console.log('Successfully connected to mongodb'))
   .catch(e => console.error(e))
 
