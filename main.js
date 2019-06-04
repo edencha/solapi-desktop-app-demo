@@ -12,8 +12,7 @@ const config = {
   solapiHost: 'https://api.solapi.com',
   client_id: 'CIDIVP82EOCJX1WO',
   response_type: 'code',
-  redirect_uri: 'https://solapi-desktop-app-demo.sendsms.kr/token',
-  scope: 'users:read message:write senderid:read'
+  redirect_uri: 'https://solapi-desktop-app-demo.sendsms.kr/token'
 }
 
 function isLogin() {

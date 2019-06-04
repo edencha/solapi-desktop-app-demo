@@ -11,7 +11,7 @@ const clientConfig = require('./client-config.json')
 const oauth2Config = {
   response_type: 'code',
   redirect_uri: 'https://solapi-desktop-app-demo.sendsms.kr/token',
-  scope: 'users:read message:write senderid:read'
+  scope: 'cash:read message:write senderid:read'
 }
 
 app.use(bodyParser.json())
@@ -106,7 +106,7 @@ app.use('/send', async (req, res, next) => {
 
 app.use('/senderids', async (req, res, next) => {
   try {
-    const { state } = req.query
+    const state = req.headers.authorization.split(' ')[1]
     const accessToken = await getAccessToken(state)
     const headers = { Authorization: `Bearer ${accessToken}` }
     const requestUrl = 'https://api.solapi.com/senderid/v1/numbers/active'
